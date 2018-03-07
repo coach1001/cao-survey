@@ -24,11 +24,11 @@
             hide-actions
           >
           <template slot="items" slot-scope="props">
-            <td class="text-xs-left title" style="cursor: pointer;"  @click="openSurvey(props.item.id)">{{ props.item.id }}</td>
-            <td class="text-xs-left title" style="cursor: pointer;"  @click="openSurvey(props.item.id)">{{ props.item.name }}</td>
-            <td class="text-xs-left title" style="cursor: pointer;" @click="openSurvey(props.item.id)">{{ props.item.date_of_interview | dateFilter }}</td>
+            <td class="text-xs-left title" style="cursor: pointer;"  @click="openSurvey(props.item._id)">{{ props.item._id }}</td>
+            <td class="text-xs-left title" style="cursor: pointer;"  @click="openSurvey(props.item._id)">{{ props.item.name }}</td>
+            <td class="text-xs-left title" style="cursor: pointer;" @click="openSurvey(props.item._id)">{{ props.item.date_of_interview | dateFilter }}</td>
             <td>
-              <v-btn fab dark color="red" small  @click="confirmDelete(props.item.id)">
+              <v-btn fab dark color="red" small  @click="confirmDelete(props.item._id)">
                 <v-icon dark>remove</v-icon>
               </v-btn>
             </td>
@@ -51,12 +51,12 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Home',
   computed: {
-    ...mapState(['surveys'])
+    ...mapGetters({surveys: 'getSurveys'})
   },
   data () {
     return {
@@ -88,6 +88,7 @@ export default {
   },
   methods: {
     openSurvey (id) {
+      // this.$store.dispatch('TOGGLE_LOADING', true)
       this.$router.push({path: '/surveys/' + id})
     },
     createSurvey () {

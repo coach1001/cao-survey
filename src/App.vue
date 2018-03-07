@@ -11,13 +11,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
 export default {
-  computed: {
-    ...mapGetters({
-      loading: 'getLoading'
-    })
+  data () {
+    return {
+      loading: false
+    }
   }
 }
 
@@ -47,4 +45,11 @@ export default {
 .fade-enter, .fade-leave-active {
   opacity: 0
 }
+
+.centered-progress {
+  position: absolute; /* or absolute */
+  top: calc(50% - 125px);
+  left: calc(50% - 125px);
+}
+
 </style>

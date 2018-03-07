@@ -4,6 +4,7 @@ import axios from 'axios'
 import { cloneDeep, merge } from 'lodash'
 
 Vue.use(Vuex)
+const API_BASE = 'http://gpr.fhr.org.za:3009'
 
 const store = new Vuex.Store({
   state: {
@@ -16,7 +17,8 @@ const store = new Vuex.Store({
         address: null,
         gps_coordinates: null,
         persons_interviewed: [],
-        researchers: []
+        researchers: [],
+        images: []
       },
       governance: {
         legal_status: {
@@ -185,17 +187,18 @@ const store = new Vuex.Store({
         programmes_ran: [],
         achievements_impact: []
       },
-      story_of_significant_change: []
+      story_of_significant_change: [],
+      narrative: []
     },
     loading: false
   },
   actions: {
-    ENABLE_LOADING: ({commit}) => {
-      commit('SET_LOADING', true)
+    TOGGLE_LOADING: ({commit}, value) => {
+      commit('SET_LOADING', value)
     },
     LOAD_SURVEY_LIST: ({ commit }) => {
       commit('SET_LOADING', true)
-      axios.get('http://localhost:3009/api/surveys').then((response) => {
+      axios.get(API_BASE + '/api/surveys').then((response) => {
         commit('SET_SURVEY_LIST', { list: response.data })
         commit('SET_LOADING', false)
       }, (err) => {
@@ -205,7 +208,7 @@ const store = new Vuex.Store({
     },
     LOAD_SURVEY: ({ commit }, id) => {
       commit('SET_LOADING', true)
-      axios.get('http://localhost:3009/api/surveys/' + id).then((response) => {
+      axios.get(API_BASE + '/api/surveys/' + id).then((response) => {
         commit('SET_SURVEY', { object: response.data })
         commit('SET_LOADING', false)
       }, (err) => {
@@ -225,7 +228,7 @@ const store = new Vuex.Store({
     },
     CREATE_SURVEY: ({commit}, payload) => {
       commit('SET_LOADING', true)
-      axios.post('http://localhost:3009/api/surveys', payload).then((response) => {
+      return axios.post(API_BASE + '/api/surveys', payload).then((response) => {
         commit('SET_SURVEY', { object: response.data })
         commit('SET_LOADING', false)
       }, (err) => {
@@ -235,7 +238,7 @@ const store = new Vuex.Store({
     },
     UPDATE_SURVEY: ({commit}, payload) => {
       commit('SET_LOADING', true)
-      axios.patch('http://localhost:3009/api/surveys', payload).then((response) => {
+      axios.patch(API_BASE + '/api/surveys', payload).then((response) => {
         commit('SET_SURVEY', { object: response.data })
         commit('SET_LOADING', false)
       }, (err) => {
@@ -245,7 +248,7 @@ const store = new Vuex.Store({
     },
     DELETE_SURVEY: ({dispatch, commit}, id) => {
       commit('SET_LOADING', true)
-      axios.delete('http://localhost:3009/api/surveys/' + id).then((response) => {
+      axios.delete(API_BASE + '/api/surveys/' + id).then((response) => {
         dispatch('LOAD_SURVEY_LIST')
       }, (err) => {
         console.log(err)
@@ -260,8 +263,18 @@ const store = new Vuex.Store({
     SET_SURVEY_LIST: (state, { list }) => {
       state.surveys = []
       list.map((obj) => {
-        obj.general.id = obj._id
-        state.surveys.push(obj.general)
+        let survey = {}
+        if (obj.general) {
+          survey.id = obj._id
+          survey._id = obj._id
+          survey.name = obj.general.name
+          survey.date_of_interview = obj.general.date_of_interview
+        } else {
+          survey.id = obj._id
+          survey._id = obj._id
+          survey.date_of_interview = ''
+        }
+        state.surveys.push(survey)
       })
     },
     SET_SURVEY: (state, { object }) => {

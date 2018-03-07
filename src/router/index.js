@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
-import SurveyEmpty from '@/components/SurveyEmpty'
+import Survey from '@/components/Survey'
 
 Vue.use(Router)
 
@@ -15,12 +15,12 @@ export default new Router({
     {
       path: '/surveys/create',
       name: 'SurveyCreate',
-      component: SurveyEmpty
+      component: Survey
     },
     {
       path: '/surveys/:id',
       name: 'SurveyEdit',
-      component: SurveyEmpty,
+      component: Survey,
       props: true
     }
   ]
